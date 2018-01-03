@@ -12,6 +12,11 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
     }
 
+
+    /**
+     * Sets the activity with an immersive experience
+     * @param hasFocus
+     */
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);

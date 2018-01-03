@@ -3,8 +3,6 @@ package gionee.com.catchchick;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.os.Build;
-import android.support.annotation.RequiresApi;
 
 /**
  * Created by ljc on 18-1-3.
@@ -29,10 +27,11 @@ public class Utils {
         return volume;
     }
 
+
     /**
      *Sets the volume on the background music.
+     * @param strength
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
     public void setVolumeAndSpeed(int strength) {
         float ratio;
         ratio = Math.round(strength / 10) / 10f;
