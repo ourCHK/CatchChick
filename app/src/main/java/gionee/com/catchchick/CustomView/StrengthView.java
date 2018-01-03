@@ -6,12 +6,11 @@ import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Shader;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.View;
-
-import gionee.com.catchchick.R;
 
 /**
  * Created by chk on 17-12-21.
@@ -23,17 +22,17 @@ public class StrengthView extends View{
     public static int DEVICE_HEIGHT;
     int mViewWidth;
     int mViewHeight;
-    int mStrengthViewHeight;
-    int mStrengthViewWidth;
-    int mStartX;
-    int mStartY;
-    int mEndX;
-    int mEndY;
 
-    Paint mPaint;
-    Paint mBackgroundPaint;
-    LinearGradient mLinearGradient;
+    float mStrengthViewHeight;
+    float mStrengthViewWidth;
     float mCurrentHeight;
+
+    Paint mPaintStrength;
+    Paint mPaintFrame;
+    Paint mPaintBackground;
+    LinearGradient mLinearGradient; //设置渐变
+
+    Handler mHandler;
 
     public StrengthView(Context context) {
         super(context);
@@ -50,26 +49,51 @@ public class StrengthView extends View{
         DEVICE_WIDTH = dm.widthPixels;
         DEVICE_HEIGHT = dm.heightPixels;
 
-        mPaint = new Paint();
-        mPaint.setStrokeWidth(5);
+        mPaintStrength = new Paint();
+        mPaintStrength.setStrokeWidth(5);
+        mPaintStrength.setAntiAlias(true);
 
-        mBackgroundPaint = new Paint();
-        mBackgroundPaint.setStrokeWidth(10);
-        mBackgroundPaint.setStyle(Paint.Style.STROKE);
-        mBackgroundPaint.setColor(Color.YELLOW);
+        mPaintFrame = new Paint();
+        mPaintFrame.setStrokeWidth(20);
+        mPaintFrame.setStyle(Paint.Style.STROKE);
+        mPaintFrame.setColor(Color.rgb(0xff,0xa5,0));
+        mPaintFrame.setAntiAlias(true);
+
+        mPaintBackground = new Paint();
+        mPaintBackground.setStrokeWidth(5);
+        mPaintBackground.setStyle(Paint.Style.FILL);
+        mPaintBackground.setColor(Color.rgb(0xFF,0x7f,0x24));
+        mPaintBackground.setAntiAlias(true);
     }
-
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawRect(0, mViewHeight - mCurrentHeight, mViewWidth, mViewHeight, mPaint);
         drawBackground(canvas);
+        drawStrength(canvas);
+        drawFrame(canvas);
     }
 
+    private void drawStrength(Canvas canvas) {
+        canvas.save();
+        canvas.translate(0,mViewHeight/6);
+        canvas.drawRoundRect(0,mStrengthViewHeight-mCurrentHeight,mViewWidth,mStrengthViewHeight,40,20, mPaintStrength);
+        canvas.restore();
+    }
 
     private void drawBackground(Canvas canvas) {
-        canvas.drawRoundRect(0,mViewHeight - mCurrentHeight, mViewWidth, mViewHeight,10,10,mBackgroundPaint);
+        canvas.save();
+        canvas.translate(0,mViewHeight/6);
+        canvas.drawRoundRect(0,0,mViewWidth,mStrengthViewHeight,10,10,mPaintBackground);
+        canvas.restore();
+    }
+
+    //绘制边框
+    private void drawFrame(Canvas canvas) {
+        canvas.save();
+        canvas.translate(0,mViewHeight/6);
+        canvas.drawRoundRect(0,0, mViewWidth, mStrengthViewHeight,10,10, mPaintFrame);
+        canvas.restore();
     }
 
     @Override
@@ -78,20 +102,19 @@ public class StrengthView extends View{
         setMeasuredDimension(measureWidth(widthMeasureSpec),measureHeight(heightMeasureSpec));
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        super.onLayout(changed, left, top, right, bottom);
-
-    }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         mViewWidth = getWidth();
         mViewHeight = getHeight();
-        mCurrentHeight = mViewHeight;
+
+        mStrengthViewHeight = mViewHeight * 2/3f;
+        mStrengthViewWidth = mViewWidth;
+        mCurrentHeight = mStrengthViewHeight/2;
+
         mLinearGradient = new LinearGradient(0,0, mViewWidth, mViewHeight,Color.rgb(0xFF,0,0xFF), Color.rgb(0x8e,0xe5,0xee), Shader.TileMode.CLAMP);
-        mPaint.setShader(mLinearGradient);
+        mPaintStrength.setShader(mLinearGradient);
     }
 
     /**
@@ -100,7 +123,7 @@ public class StrengthView extends View{
      * @return
      */
     private int measureWidth(int widthMeasureSpec) {
-        int result = 0;
+        int result;
         int specMode = MeasureSpec.getMode(widthMeasureSpec);
         int specSize = MeasureSpec.getSize(widthMeasureSpec);
         if (specMode == MeasureSpec.EXACTLY) {  //父亲制定大小，对应match_parent
@@ -135,8 +158,21 @@ public class StrengthView extends View{
         return result;
     }
 
-    public void setCurrentHeight(int progress) {
-        this.mCurrentHeight = progress/100f * mViewHeight;
+    /**
+     * 设置力量大小
+     * @param strength
+     */
+    public void setStrength(int strength) {
+        mCurrentHeight = strength/100f * mStrengthViewHeight;
         invalidate();
     }
+
+    /**
+     * 设置Handler用于主线程跟新UI
+     * @param handler
+     */
+    public void setHandler(Handler handler) {
+        mHandler = handler;
+    }
+
 }
