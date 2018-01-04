@@ -6,17 +6,22 @@
     android:orientation="horizontal"
     tools:context="gionee.com.catchchick.MainActivity">
 
-    <gionee.com.catchchick.CustomView.StrengthView
-        android:id="@+id/strengthView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+    <!--<gionee.com.catchchick.CustomView.StrengthView-->
+        <!--android:id="@+id/strengthView"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent" />-->
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_weight="1"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:src="@mipmap/run"
-        />
+    <!--<ImageView-->
+        <!--android:id="@+id/imageView"-->
+        <!--android:layout_weight="1"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:src="@mipmap/run"-->
+        <!--/>-->
+
+    <gionee.com.catchchick.CustomView.ChickViewChao
+        android:id="@+id/chickView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </LinearLayout>
