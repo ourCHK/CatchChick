@@ -8,31 +8,37 @@ import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
 
+import gionee.com.catchchick.CustomView.ChickView;
+
 import gionee.com.catchchick.CustomView.ChickViewChao;
 
 public class MainActivity extends Activity {
+
+    private ChickView mChickView;
 
     private ChickViewChao mChickViewChao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        mChickView = new ChickView(this);
+//        setContentView(mChickView);
         setContentView(R.layout.activity_main);
         mChickViewChao = (ChickViewChao)findViewById(R.id.chickView);
-        new Thread(new Runnable() {
-            int i=0;
-            @Override
-            public void run() {
-                if (i<80){
-                    mChickViewChao.setStrength(i);
-                }
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            int i=0;
+//            @Override
+//            public void run() {
+//                if (i<80){
+//                    mChickViewChao.setStrength(i);
+//                }
+//                try {
+//                    Thread.sleep(50);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }).start();
 
     }
 

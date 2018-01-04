@@ -5,12 +5,17 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Shader;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.SystemClock;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -45,6 +50,18 @@ public class ChickViewChao extends SurfaceView implements Runnable, SurfaceHolde
     private int mWidth;
     private int mHeight;
 
+    Canvas canvas;
+    Paint mPaintStrength;
+    Paint mPaintFrame;
+    Paint mPaintBackground;
+    LinearGradient mLinearGradient; //设置渐变
+
+    private int mViewWidth;
+    private int mViewHeight;
+    private float mStrengthViewHeight;
+    private float mStrengthViewWidth;
+    private float mCurrentHeight;
+
     public ChickViewChao(Context context) {
         super(context);
         mContext = context;
@@ -77,9 +94,22 @@ public class ChickViewChao extends SurfaceView implements Runnable, SurfaceHolde
         mWidth = getWidth();
         mHeight = getHeight();
         mRect = new Rect(0, 0, mWidth, mHeight);
+
+        mViewWidth = mWidth;
+        mViewHeight = mHeight;
+        mStrengthViewHeight = mHeight*3/5 - 20;
+        mStrengthViewWidth = mWidth/10;
+        Log.i("ChickView",mStrengthViewWidth+" "+mStrengthViewHeight);
+        mLinearGradient = new LinearGradient(0,0, mStrengthViewWidth, mStrengthViewHeight,
+                Color.parseColor("#FF00FF"), Color.parseColor("#8EE5EE"), Shader.TileMode.CLAMP);
+        mPaintStrength.setShader(mLinearGradient);
+
         drawBitmap(R.drawable.drink_00);
         mUtils.playMusic();
         mUtils.setVolumeAndSpeed(0);
+
+
+
     }
 
     @Override
@@ -124,6 +154,7 @@ public class ChickViewChao extends SurfaceView implements Runnable, SurfaceHolde
                         int i = 0;
                         while (isDown) {
                             setStrength(i);
+                            setCurrentHeight(i);
                             SystemClock.sleep(60);
                             i++;
                         }
@@ -134,6 +165,7 @@ public class ChickViewChao extends SurfaceView implements Runnable, SurfaceHolde
                 isDown = false;
                 isUp = true;
                 mUtils.setVolumeAndSpeed(0);
+                setCurrentHeight(0);
                 int id = getResId(0);
                 drawBitmap(id);
                 break;
@@ -157,6 +189,23 @@ public class ChickViewChao extends SurfaceView implements Runnable, SurfaceHolde
         packageName = mContext.getPackageName();
         mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
         mUtils = new Utils(mContext, mAudioManager);
+
+        mPaintStrength = new Paint();
+        mPaintStrength.setStrokeWidth(5);
+        mPaintStrength.setAntiAlias(true);
+        mPaintStrength.setStyle(Paint.Style.FILL);
+
+        mPaintFrame = new Paint();
+        mPaintFrame.setStrokeWidth(20);
+        mPaintFrame.setStyle(Paint.Style.STROKE);
+        mPaintFrame.setColor(Color.parseColor("#FFA500"));
+        mPaintFrame.setAntiAlias(true);
+
+        mPaintBackground = new Paint();
+        mPaintBackground.setStrokeWidth(5);
+        mPaintBackground.setStyle(Paint.Style.FILL);
+        mPaintBackground.setColor(Color.parseColor("#FF7F24"));
+        mPaintBackground.setAntiAlias(true);
     }
 
     /**
@@ -207,6 +256,10 @@ public class ChickViewChao extends SurfaceView implements Runnable, SurfaceHolde
         try {
             mCanvas = mHolder.lockCanvas();
             mCanvas.drawBitmap(bitmap, rect, mRect, null);
+
+            drawBackground(mCanvas);
+            drawStrength(mCanvas);
+            drawFrame(mCanvas);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -215,4 +268,41 @@ public class ChickViewChao extends SurfaceView implements Runnable, SurfaceHolde
             }
         }
     }
+
+    //绘制力量大小
+    private void drawStrength(Canvas canvas) {
+        canvas.save();
+        canvas.translate(10,mViewHeight/5);
+        if (mCurrentHeight >= 1) {
+            canvas.drawRect(0,mStrengthViewHeight-mCurrentHeight,mStrengthViewWidth,mStrengthViewHeight-10, mPaintStrength);
+        }
+        canvas.restore();
+    }
+
+    //绘制背景
+    private void drawBackground(Canvas canvas) {
+        canvas.save();
+        canvas.translate(10,mViewHeight/5-10);
+        canvas.drawRoundRect(0,0,mStrengthViewWidth,mStrengthViewHeight,10,10,mPaintBackground);
+        canvas.restore();
+    }
+
+    //绘制边框
+    private void drawFrame(Canvas canvas) {
+        canvas.save();
+        canvas.translate(10,mViewHeight/5-10);
+        canvas.drawRoundRect(0,0, mStrengthViewWidth, mStrengthViewHeight,10,10, mPaintFrame);
+        canvas.restore();
+    }
+
+    /**
+     * 根据力量大小设置力量条高度
+     */
+    public void setCurrentHeight(int strength) {
+        if (strength >= 100)
+            strength = 100;
+        mCurrentHeight = strength/100f * mStrengthViewHeight;
+        Log.i("ChickViewChoa",mCurrentHeight+"  "+strength);
+    }
+
 }

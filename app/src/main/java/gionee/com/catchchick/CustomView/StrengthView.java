@@ -168,7 +168,7 @@ public class StrengthView extends View{
     }
 
     /**
-     * 设置Handler用于主线程跟新UI
+     * 设置Handler用于和主线程进行通信
      * @param handler
      */
     public void setHandler(Handler handler) {
