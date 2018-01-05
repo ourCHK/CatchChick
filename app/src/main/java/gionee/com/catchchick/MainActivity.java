@@ -26,30 +26,6 @@ public class MainActivity extends Activity {
 //        setContentView(mChickView);
         mChickViewChao = new ChickViewChao(this);
         setContentView(mChickViewChao);
-//        setContentView(R.layout.activity_main);
-//        mChickViewChao = (ChickViewChao)findViewById(R.id.chickView);
-        mChickViewChao.isRunning = true;
-        mChickViewChao.isDown = true;
-        mChickViewChao.setStrength(50);
-        new Thread(new Runnable() {
-            int i=0;
-            @Override
-            public void run() {
-
-                while (i<80){
-                    mChickViewChao.setStrength(i);
-                    i++;
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (i==79){
-                        mChickViewChao.isDown = false;
-                    }
-                }
-            }
-        }).start();
     }
 
     /**
