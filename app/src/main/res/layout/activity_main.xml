@@ -19,8 +19,13 @@
         <!--android:src="@mipmap/run"-->
         <!--/>-->
 
-    <gionee.com.catchchick.CustomView.ChickViewChao
-        android:id="@+id/chickView"
+    <!--<gionee.com.catchchick.CustomView.ChickViewChao-->
+        <!--android:id="@+id/chickView"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
+    <SurfaceView
+        android:id="@+id/surfaceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
